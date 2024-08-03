@@ -1,47 +1,14 @@
-import {
-  CoordinateExtent,
-  NodeOrigin,
-  Position,
-  XYPosition,
-} from "@xyflow/react";
+import { Position } from "@xyflow/react";
+import { CharacterType } from "./character";
+import { FilmType } from "./films";
+import { StarShipType } from "./starship";
 
-export type Node<
-  NodeData extends Record<string, unknown> = Record<string, unknown>,
-  NodeType extends string = string
-> = {
+export type Node = {
   id: string;
-  position: XYPosition;
-  data: NodeData;
-  type?: NodeType;
-  sourcePosition?: Position;
-  targetPosition?: Position;
-  hidden?: boolean;
-  selected?: boolean;
-  dragging?: boolean;
-  draggable?: boolean;
-  selectable?: boolean;
-  connectable?: boolean;
-  resizing?: boolean;
-  deletable?: boolean;
-  dragHandle?: string;
-  width?: number | null;
-  height?: number | null;
-  parentId?: string;
-  zIndex?: number;
-  extent?: "parent" | CoordinateExtent;
-  expandParent?: boolean;
-  ariaLabel?: string;
-  focusable?: boolean;
-  style?: React.CSSProperties;
-  className?: string;
-  origin?: NodeOrigin;
-  handles?: NodeHandle[];
-  measured?: {
-    width?: number;
-    height?: number;
-  };
+  type: "charNode" | "filmNode" | "starShipsNode";
+  data: CharacterType | FilmType | StarShipType;
+  position: { x: number; y: number };
 };
-
 export type NodeHandle = {
   x: number;
   y: number;
@@ -51,3 +18,9 @@ export type NodeHandle = {
   height?: number;
   type?: "source" | "target";
 };
+export interface Edge {
+  id: string;
+  source: string;
+  target: string;
+  animated: boolean;
+}

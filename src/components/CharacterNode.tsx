@@ -1,8 +1,8 @@
 import React from "react";
-import { characterType } from "../types/character";
+import { CharacterType } from "../types/character";
 import { Handle, Position } from "@xyflow/react";
 import "../styles/characterNode.style.scss";
-const CharacterNode = ({ data }: { data: characterType }) => {
+const CharacterNode = ({ data }: { data: CharacterType }) => {
   return (
     <div className="character-details">
       <span className="character-name">{data.name}</span>

@@ -1,6 +1,6 @@
 import React from "react";
 import { CharacterItem } from "../components/CharacterItem";
-import { characterType } from "../types/character";
+import { CharacterType } from "../types/character";
 import { Header } from "../components/Header";
 import "../styles/characterListPage.style.scss";
 import { useNavigate } from "react-router-dom";
@@ -206,7 +206,7 @@ export const CharactersListPage = () => {
     <div className="characters-list">
       <Header />
       <div className="characters-cards">
-        {mockData.map((item: characterType) => (
+        {mockData.map((item: CharacterType) => (
           <CharacterItem character={item} onClick={handleNavigate} />
         ))}
       </div>

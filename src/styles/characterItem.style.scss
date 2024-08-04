@@ -1,13 +1,15 @@
 .character-card {
-  background-color: teal;
+  background-color: black;
+  color: yellow;
   display: flex;
   flex-direction: column;
   gap: 5px;
   justify-content: center;
   align-items: center;
   .character-picture {
-    
   }
   .character-name {
+    font-size: larger;
+    padding: 10px;
   }
 }

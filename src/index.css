@@ -1,11 +1,12 @@
 @import url('https://fonts.cdnfonts.com/css/star-wars');
 
 :root {
-  font-family: 'Star Wars', sans-serif;
+  font-family:sans-serif; 
   
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: black;
+  background-image: url("https://cdn.wallpapersafari.com/1/97/co341S.jpg");
   
   font-synthesis: none;
   text-rendering: optimizeLegibility;

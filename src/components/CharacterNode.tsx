@@ -12,6 +12,9 @@ const CharacterNode = ({ data }: { data: CharacterType }) => {
         alt={data.name}
       />
       <Handle type="source" position={Position.Bottom} id="a" />
+      <Handle type="source" position={Position.Left} id="b" />
+      <Handle type="source" position={Position.Right} id="c" />
+      <Handle type="source" position={Position.Top} id="d" />
     </div>
   );
 };

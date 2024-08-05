@@ -6,10 +6,8 @@ const FilmNode = ({ data }: { data: FilmType }) => {
   return (
     <div className="film-details">
       <span className="film-title">{data.title}</span>
-      <Handle type="source" position={Position.Left} id="a" />
-      <Handle type="target" position={Position.Right} id="b" />
-      <Handle type="target" position={Position.Top} id="c" />
-      <Handle type="target" position={Position.Bottom} id="d" />
+      <Handle type="source" position={Position.Bottom} id="a" />
+      <Handle type="target" position={Position.Top} id="b" />
     </div>
   );
 };

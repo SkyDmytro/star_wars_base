@@ -7,7 +7,6 @@ const StarShipNode = ({ data }: { data: StarShipType }) => {
   return (
     <div className="starShip-details">
       <span className="starShip-name">{data.name}</span>
-
       <Handle type="target" position={Position.Top} id="a" />
     </div>
   );

@@ -16,4 +16,4 @@ export type CharacterType = {
   created: string;
   edited: string;
   url: string;
-};
+} & Record<string, unknown>;

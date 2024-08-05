@@ -1,4 +1,4 @@
-export type FilmType = {
+export interface FilmType {
   id: number;
   title: string;
   episode_id: number;
@@ -14,4 +14,4 @@ export type FilmType = {
   created: string;
   edited: string;
   url: string;
-} & Record<string, unknown>;
+}

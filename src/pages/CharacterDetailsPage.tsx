@@ -5,8 +5,6 @@ import CharacterNode from "../components/CharacterNode";
 import "@xyflow/react/dist/style.css";
 import StarShipNode from "../components/StarShipNode";
 import FilmNode from "../components/FilmNode";
-import { getReactFlowProps } from "../utils/functions";
-import { mockCharacter, mockStarships, mockFilms } from "../utils/mocks";
 
 // const films: FilmType[] = [
 //   {
@@ -556,77 +554,71 @@ const nodeTypes = {
   starShipsNode: StarShipNode,
 };
 export const CharacterDetailsPage = () => {
-  // const { id } = useParaes();
-  const { edges: initialEdges, nodes: initialNodes } = getReactFlowProps(
-    mockCharacter,
-    mockFilms,
-    mockStarships
-  );
-  console.log(initialEdges, initialNodes);
-  // const initialNodes = [
-  //   {
-  //     id: "1",
-  //     type: "charNode",
-  //     data: {
-  //       id: 1,
-  //       name: "Luke Skywalker",
-  //       height: "172",
-  //       mass: "77",
-  //       hair_color: "blond",
-  //       skin_color: "fair",
-  //       eye_color: "blue",
-  //       birth_year: "19BBY",
-  //       gender: "male",
-  //       homeworld: 1,
-  //       films: [2, 6, 3, 1, 7],
-  //       species: [1],
-  //       vehicles: [14, 30],
-  //       starships: [12, 22],
-  //       created: "2014-12-09T13:50:51.644000Z",
-  //       edited: "2014-12-20T21:17:56.891000Z",
-  //       url: "https://sw-api.starnavi.io/people/1/",
-  //     },
-  //     position: { x: 250, y: 0 },
-  //   },
-  //   {
-  //     id: "2",
-  //     data: { label: "Фильм 1", title: "dsadsa" },
-  //     position: { x: 50, y: 200 },
-  //     type: "filmNode",
-  //   },
-  //   {
-  //     id: "3",
-  //     data: { label: "Фильм 2", title: "dsadsa" },
-  //     position: { x: 550, y: 200 },
-  //     type: "filmNode",
-  //   },
-  //   {
-  //     id: "4",
-  //     data: { label: "Корабль 1", name: "dsadas" },
-  //     position: { x: 100, y: 500 },
-  //     type: "starShipsNode",
-  //   },
-  //   {
-  //     id: "5",
-  //     data: { label: "Корабль 2", name: "dsadas" },
-  //     position: { x: 250, y: 500 },
-  //     type: "starShipsNode",
-  //   },
-  //   {
-  //     id: "6",
-  //     data: { label: "Корабль 3", name: "dsadas" },
-  //     position: { x: 400, y: 500 },
-  //     type: "starShipsNode",
-  //   },
-  // ];
+  // const { id } = useParams();
+  const initialNodes = [
+    {
+      id: "1",
+      type: "charNode",
+      data: {
+        id: 1,
+        name: "Luke Skywalker",
+        height: "172",
+        mass: "77",
+        hair_color: "blond",
+        skin_color: "fair",
+        eye_color: "blue",
+        birth_year: "19BBY",
+        gender: "male",
+        homeworld: 1,
+        films: [2, 6, 3, 1, 7],
+        species: [1],
+        vehicles: [14, 30],
+        starships: [12, 22],
+        created: "2014-12-09T13:50:51.644000Z",
+        edited: "2014-12-20T21:17:56.891000Z",
+        url: "https://sw-api.starnavi.io/people/1/",
+      },
+      position: { x: 250, y: 0 },
+    },
+    {
+      id: "2",
+      data: { label: "Фильм 1", title: "dsadsa" },
+      position: { x: 50, y: 200 },
+      type: "filmNode",
+    },
+    {
+      id: "3",
+      data: { label: "Фильм 2", title: "dsadsa" },
+      position: { x: 550, y: 200 },
+      type: "filmNode",
+    },
+    {
+      id: "4",
+      data: { label: "Корабль 1", name: "dsadas" },
+      position: { x: 100, y: 500 },
+      type: "starShipsNode",
+    },
+    {
+      id: "5",
+      data: { label: "Корабль 2", name: "dsadas" },
+      position: { x: 250, y: 500 },
+      type: "starShipsNode",
+    },
+    {
+      id: "6",
+      data: { label: "Корабль 3", name: "dsadas" },
+      position: { x: 400, y: 500 },
+      type: "starShipsNode",
+    },
+  ];
 
-  // const initialEdges = [
-  //   { id: "e1-2", source: "1", target: "2", animated: true },
-  //   { id: "e1-3", source: "1", target: "3", animated: true },
-  //   { id: "e2-4", source: "2", target: "4", animated: true },
-  //   { id: "e2-5", source: "2", target: "5", animated: true },
-  //   { id: "e3-6", source: "3", target: "6", animated: true },
-  // ];
+  const initialEdges = [
+    { id: "e1-2", source: "1", target: "2", animated: true },
+    { id: "e1-3", source: "1", target: "3", animated: true },
+    { id: "e2-4", source: "2", target: "4", animated: true },
+    { id: "e2-5", source: "2", target: "5", animated: true },
+    { id: "e3-6", source: "3", target: "6", animated: true },
+  ];
 
   return (
     <div style={{ height: "100vh", width: "100vw" }}>

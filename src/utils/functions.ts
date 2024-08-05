@@ -13,33 +13,27 @@ const getInitialNodes = (
       id: "1",
       type: "charNode",
       data: character,
-      position: { x: 0, y: 0 },
+      position: { x: 250, y: 0 },
     },
   ];
 
   let idCounter = 2;
 
   films.forEach((film, index) => {
-    const position = getElementPosition(index, films.length, 250);
-
     nodes.push({
       id: idCounter.toString(),
       data: film,
-      position: {
-        x: position.x,
-        y: position.y,
-      },
+      position: { x: 50 + (index % 2) * 500, y: 200 },
       type: "filmNode",
     });
     idCounter++;
   });
 
   starships.forEach((starship, index) => {
-    const position = getElementPosition(index, starships.length, 500);
     nodes.push({
       id: idCounter.toString(),
       data: starship,
-      position: position,
+      position: { x: 100 + (index % 3) * 150, y: 500 },
       type: "starShipsNode",
     });
     idCounter++;
@@ -51,37 +45,38 @@ const getInitialNodes = (
 const getInitialEdges = (nodes: Node[], films: FilmType[]): Edge[] => {
   const edges: Edge[] = [];
   const characterNodes = nodes[0];
-  const filmsNodes = nodes.filter((node) => node.type === "filmNode");
-  const starShipsNodes = nodes.filter((node) => node.type === "starShipsNode");
+  const filmsNodes = nodes.filter((node) => (node.type = "filmNode"));
+  // Создание связей от фильмов к герою
   filmsNodes.forEach((film) => {
     const filmToCharacterEdge: Edge = {
       id: `e${film.id}-${characterNodes.id}`,
-      source: `${characterNodes.id}`,
-      target: `${film.id}`,
+      source: `${film.id}`,
+      target: `${characterNodes.id}`,
       animated: true,
     };
-
     edges.push(filmToCharacterEdge);
   });
 
-  starShipsNodes.forEach((starshipNode) => {
-    const filmsId = films.map((film) => film.id);
-    starshipNode.data.films.forEach((filmId: number) => {
-      if (filmsId.includes(filmId)) {
-        const filmNodeId = filmsNodes.find(
-          (node) => node.data.id === filmId
+  films.forEach((film) => {
+    const filmNodeId = nodes.find(
+      (node) => node.data.id === film.id && node.type === "filmNode"
+    )?.id;
+
+    if (filmNodeId) {
+      film.starships.forEach((starshipId) => {
+        const starshipNodeId = nodes.find(
+          (node) => node.data.id === starshipId && node.type === "starShipsNode"
         )?.id;
-        if (filmNodeId) {
-          const starshipToFilmEdge: Edge = {
-            id: `ef-s${filmNodeId}-${starshipNode.id}`,
-            source: filmNodeId?.toString(),
-            target: starshipNode.id.toString(),
+        if (starshipNodeId) {
+          edges.push({
+            id: `edge-film-${starshipId}`,
+            source: filmNodeId,
+            target: starshipNodeId,
             animated: true,
-          };
-          edges.push(starshipToFilmEdge);
+          });
         }
-      }
-    });
+      });
+    }
   });
 
   return edges;
@@ -93,22 +88,7 @@ const getReactFlowProps = (
   starships: StarShipType[]
 ) => {
   const nodes = getInitialNodes(characters, films, starships);
-  const edges = getInitialEdges(nodes, films);
-
-  return { edges, nodes };
+  getInitialEdges(nodes, films);
 };
 
 export { getInitialNodes, getInitialEdges, getReactFlowProps };
-
-export const getElementPosition = (
-  index: number,
-  total: number,
-  radius: number
-) => {
-  const angle = ((2 * Math.PI) / total) * index;
-
-  const x = Math.round(radius * Math.cos(angle));
-  const y = Math.round(radius * Math.sin(angle));
-
-  return { x, y };
-};

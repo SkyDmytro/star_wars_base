@@ -3,12 +3,25 @@ import { CharacterType } from "./character";
 import { FilmType } from "./films";
 import { StarShipType } from "./starship";
 
-export type Node = {
-  id: string;
-  type: "charNode" | "filmNode" | "starShipsNode";
-  data: CharacterType | FilmType | StarShipType;
-  position: { x: number; y: number };
-};
+export type Node =
+  | {
+      id: string;
+      type: "charNode";
+      data: CharacterType;
+      position: { x: number; y: number };
+    }
+  | {
+      id: string;
+      type: "filmNode";
+      data: FilmType;
+      position: { x: number; y: number };
+    }
+  | {
+      id: string;
+      type: "starShipsNode";
+      data: StarShipType;
+      position: { x: number; y: number };
+    };
 export type NodeHandle = {
   x: number;
   y: number;

@@ -1,4 +1,4 @@
-export interface StarShipType {
+export type StarShipType = {
   id: number;
   name: string;
   model: string;
@@ -18,4 +18,4 @@ export interface StarShipType {
   created: string;
   edited: string;
   url: string;
-}
+} & Record<string, unknown>;

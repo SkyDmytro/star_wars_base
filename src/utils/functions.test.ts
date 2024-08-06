@@ -4,6 +4,7 @@ import {
   getInitialEdges,
   getInitialNodes,
   getElementPosition,
+  getNodes,
 } from "./functions";
 import {
   mockCharacter,
@@ -16,6 +17,11 @@ describe("getInitialNodes", () => {
   test("should create initial nodes correctly", () => {
     const result = getInitialNodes(mockCharacter, mockFilms, mockStarships);
     expect(result).toEqual(mockInitialNodes);
+  });
+  test("other way", () => {
+    const result = getNodes(mockCharacter, mockFilms, 1,mockFilms.length,0,1);
+    const result2 = getNodes(mockFilms[0], mockStarships, 1);
+    console.log(result, result2);
   });
 });
 

@@ -1,3 +1,4 @@
+import { NodeTypes } from "@xyflow/react";
 import { CharacterType } from "../types/character";
 import { FilmType } from "../types/films";
 import { Edge, Node } from "../types/reactFlow";
@@ -87,17 +88,6 @@ const getInitialEdges = (nodes: Node[], films: FilmType[]): Edge[] => {
   return edges;
 };
 
-const getReactFlowProps = (
-  characters: CharacterType,
-  films: FilmType[],
-  starships: StarShipType[]
-) => {
-  const nodes = getInitialNodes(characters, films, starships);
-  const edges = getInitialEdges(nodes, films);
-
-  return { edges, nodes };
-};
-
 export { getInitialNodes, getInitialEdges, getReactFlowProps };
 
 export const getElementPosition = (
@@ -111,4 +101,134 @@ export const getElementPosition = (
   const y = Math.round(radius * Math.sin(angle));
 
   return { x, y };
+};
+
+const isCharacterType = (value: any): value is CharacterType => {
+  return (
+    (value as CharacterType).id !== undefined &&
+    (value as CharacterType).name !== undefined &&
+    (value as CharacterType).model == undefined
+  );
+};
+
+const isFilmType = (value: any): value is FilmType => {
+  return (
+    (value as FilmType).id !== undefined &&
+    (value as FilmType).title !== undefined
+  );
+};
+
+const isStarShipType = (value: any): value is StarShipType => {
+  return (
+    (value as StarShipType).id !== undefined &&
+    (value as StarShipType).model !== undefined
+  );
+};
+
+const getTypeOfNode = (
+  value: CharacterType | FilmType | StarShipType
+): "charNode" | "filmNode" | "starShipsNode" => {
+  if (isCharacterType(value)) {
+    return "charNode";
+  } else if (isFilmType(value)) {
+    return "filmNode";
+  } else if (isStarShipType(value)) {
+    return "starShipsNode";
+  } else {
+    throw new Error("Unknown type");
+  }
+};
+
+export const getNodes = (
+  mainNodeData: CharacterType | FilmType,
+  secondaryNodesData: (FilmType | StarShipType)[],
+  indexForPosition: number,
+  totalForFilmPosition: number,
+  totalForStarrShipPosition: number,
+  startedId: number
+): Node[] => {
+  // @ts-ignore
+  const mainNode: Node = {
+    data: mainNodeData,
+    id: startedId.toString(),
+    position:
+      getTypeOfNode(mainNodeData) == "charNode"
+        ? { x: 0, y: 0 }
+        : getElementPosition(indexForPosition, totalForFilmPosition, 250),
+    type: getTypeOfNode(mainNodeData),
+  };
+
+  const nodes: Node[] = [mainNode];
+
+  secondaryNodesData.forEach((node, nodeId) => {
+    //@ts-ignore
+    const newNode: Node = {
+      data: node,
+      id: (startedId + nodeId + 1).toString(),
+      position: getElementPosition(nodeId, totalForStarrShipPosition, 500),
+      type: getTypeOfNode(node),
+    };
+    nodes.push(newNode);
+  });
+
+  return nodes;
+};
+
+export const getEdges = (mainNode: Node, secondaryNodes: Node[]): Edge[] => {
+  const edges: Edge[] = [];
+
+  secondaryNodes.map((node) => {
+    const newEdge: Edge = {
+      id: `e${mainNode}-${node.id}`,
+      source: mainNode.id.toString(),
+      target: node.id.toString(),
+      animated: true,
+    };
+    edges.push(newEdge);
+  });
+
+  return edges;
+};
+const getReactFlowProps = (
+  characters: CharacterType,
+  films: FilmType[],
+  starships: StarShipType[]
+) => {
+  const edges: Edge[] = [];
+  const nodes: Node[] = [];
+
+  // const charAndFilmsNodes = getNodes(
+  //   characters,
+  //   films,
+  //   0,
+  //   films.length,
+  //   starships.length,
+  //   1
+  // );
+  // const characterNode = charAndFilmsNodes[0];
+  // const filmsNodes = charAndFilmsNodes.slice(1);
+  // const charToFilmsEdges = getEdges(characterNode, filmsNodes);
+  // nodes.push(...charAndFilmsNodes);
+  // edges.push(...charToFilmsEdges);
+
+  films.map((film, filmIndex) => {
+    const starshipsInCurrentFilm = starships.filter((starship) =>
+      starship.films.includes(film.id)
+    );
+    const filmAndStarshipsNodes = getNodes(
+      film,
+      starshipsInCurrentFilm,
+      filmIndex,
+      films.length,
+      starshipsInCurrentFilm.length,
+      nodes.length + 1
+    );
+    const filmNode = filmAndStarshipsNodes[0];
+    const starshipsNodes = filmAndStarshipsNodes.slice(1);
+    const filmToStarshipsEdges = getEdges(filmNode, starshipsNodes);
+    nodes.push(...filmAndStarshipsNodes);
+    edges.push(...filmToStarshipsEdges);
+  });
+
+  return { edges, nodes };
 };

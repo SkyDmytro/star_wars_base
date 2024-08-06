@@ -1,13 +1,13 @@
 // import { FilmType } from "../types/films";
 // import { VehicleType } from "../types/vehicles";
 import { ReactFlow } from "@xyflow/react";
-import CharacterNode from "../components/CharacterNode";
 import "@xyflow/react/dist/style.css";
-import StarShipNode from "../components/StarShipNode";
-import FilmNode from "../components/FilmNode";
+
 import { getReactFlowProps } from "../utils/functions";
 import { mockCharacter, mockStarships, mockFilms } from "../utils/mocks";
-
+import CharacterNode from "../components/CharacterNode";
+import StarShipNode from "../components/StarShipNode";
+import FilmNode from "../components/FilmNode";
 // const films: FilmType[] = [
 //   {
 //     id: 1,
@@ -550,11 +550,12 @@ import { mockCharacter, mockStarships, mockFilms } from "../utils/mocks";
 //   return <div>CharacterDetailsPage{id}</div>;
 // };
 
-const nodeTypes = {
+export const nodeTypes = {
   charNode: CharacterNode,
   filmNode: FilmNode,
   starShipsNode: StarShipNode,
 };
+
 export const CharacterDetailsPage = () => {
   // const { id } = useParaes();
   const { edges: initialEdges, nodes: initialNodes } = getReactFlowProps(
@@ -636,7 +637,7 @@ export const CharacterDetailsPage = () => {
         nodeTypes={nodeTypes}
         nodesDraggable={true}
         nodesConnectable={false}
-        elementsSelectable={false}
+        elementsSelectable={true}
         fitView
       ></ReactFlow>
     </div>

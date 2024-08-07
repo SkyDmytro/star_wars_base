@@ -1,26 +1,32 @@
-import { Position } from "@xyflow/react";
-import { CharacterType } from "./character";
-import { FilmType } from "./films";
-import { StarShipType } from "./starship";
+import { Position } from '@xyflow/react';
+import { CharacterType } from './character';
+import { FilmType } from './films';
+import { StarShipType } from './starship';
 
 export type Node =
   | {
       id: string;
-      type: "charNode";
+      type: 'charNode';
       data: CharacterType;
       position: { x: number; y: number };
+      draggable?: boolean;
+      selected?: boolean;
     }
   | {
       id: string;
-      type: "filmNode";
+      type: 'filmNode';
       data: FilmType;
       position: { x: number; y: number };
+      draggable?: boolean;
+      selected?: boolean;
     }
   | {
       id: string;
-      type: "starShipsNode";
+      type: 'starShipsNode';
       data: StarShipType;
       position: { x: number; y: number };
+      draggable?: boolean;
+      selected?: boolean;
     };
 export type NodeHandle = {
   x: number;
@@ -29,7 +35,7 @@ export type NodeHandle = {
   id?: string | null;
   width?: number;
   height?: number;
-  type?: "source" | "target";
+  type?: 'source' | 'target';
 };
 export interface Edge {
   id: string;

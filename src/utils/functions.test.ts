@@ -1,81 +1,112 @@
-import { describe, test, expect } from "@jest/globals";
-import { Edge } from "../types/reactFlow";
-import {
-  getInitialEdges,
-  getInitialNodes,
-  getElementPosition,
-} from "./functions";
-import {
-  mockCharacter,
-  mockFilms,
-  mockStarships,
-  mockInitialNodes,
-} from "./mocks";
+import { describe, expect } from '@jest/globals';
+import { getReactFlowProps, getLinePositions } from './functions';
+import { mockCharacter, mockFilms, mockStarships } from './mocks';
+import { StarShipType } from '../types/starship';
 
-describe("getInitialNodes", () => {
-  test("should create initial nodes correctly", () => {
-    const result = getInitialNodes(mockCharacter, mockFilms, mockStarships);
-    expect(result).toEqual(mockInitialNodes);
+describe('getLinePositions', () => {
+  it('should return correct positions for multiple elements with default gap', () => {
+    const positions = getLinePositions({ x: 100, y: 100 }, 3, 50, 10);
+    expect(positions).toEqual([
+      { x: 40, y: 300 },
+      { x: 100, y: 300 },
+      { x: 160, y: 300 },
+    ]);
+  });
+  it('should return correct positions with a different gap', () => {
+    const positions = getLinePositions({ x: 100, y: 100 }, 3, 50, 20);
+    expect(positions).toEqual([
+      { x: 30, y: 300 },
+      { x: 100, y: 300 },
+      { x: 170, y: 300 },
+    ]);
+  });
+  it('should handle large number of elements', () => {
+    const positions = getLinePositions({ x: 100, y: 100 }, 5, 50, 10);
+    expect(positions).toEqual([
+      { x: -20, y: 300 },
+      { x: 40, y: 300 },
+      { x: 100, y: 300 },
+      { x: 160, y: 300 },
+      { x: 220, y: 300 },
+    ]);
   });
 });
 
-describe("getInitialEdges", () => {
-  test("should create initial edges correctly", () => {
-    const edges: Edge[] = getInitialEdges(mockInitialNodes, mockFilms);
-    const testResult = edges.slice(0, 5);
-    expect(testResult).toEqual(testResult);
-  });
-});
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'mock-uuid'),
+}));
 
-describe("getElementPosition", () => {
-  test("should return correct position for index 0 in a circle with radius 100 and total 4", () => {
-    const result = getElementPosition(0, 4, 100);
-    expect(result).toEqual({ x: 100, y: 0 });
-  });
+describe('getReactFlowProps', () => {
+  it('should return correct nodes and edges for given character, films, and starships', () => {
+    const { nodes, edges } = getReactFlowProps(
+      mockCharacter,
+      mockFilms,
+      mockStarships
+    );
 
-  test("should return correct position for index 1 in a circle with radius 100 and total 4", () => {
-    const result = getElementPosition(1, 4, 100);
-    expect(result).toEqual({ x: 0, y: 100 });
-  });
+    expect(nodes).toHaveLength(27);
+    expect(edges).toHaveLength(26);
 
-  test("should return correct position for index 2 in a circle with radius 100 and total 4", () => {
-    const result = getElementPosition(2, 4, 100);
-    expect(result).toEqual({ x: -100, y: 0 });
-  });
+    const characterNode = nodes.find((node) => node.id === '1');
+    if (characterNode) {
+      expect(characterNode.type).toBe('charNode');
+      expect(characterNode.data).toEqual(mockCharacter);
+    }
 
-  test("should return correct position for index 3 in a circle with radius 100 and total 4", () => {
-    const result = getElementPosition(3, 4, 100);
-    expect(result).toEqual({ x: -0, y: -100 });
-  });
+    mockFilms.forEach((film) => {
+      const filmNode = nodes.find(
+        (node) => node.data.id === film.id && node.data.title == film.title
+      );
+      if (filmNode) {
+        expect(filmNode.type).toBe('filmNode');
+        expect(filmNode.data).toEqual(film);
+        expect(filmNode.position.y).toBe(200);
+      }
+    });
 
-  test("should return correct position for a single element with radius 50", () => {
-    const result = getElementPosition(0, 1, 50);
-    expect(result).toEqual({ x: 50, y: 0 });
-  });
+    mockStarships.forEach((starship: StarShipType) => {
+      const starshipNode = nodes.find(
+        (node) =>
+          node.data.id === starship.id && node.data.model === starship.model
+      );
+      if (starshipNode) {
+        expect(starshipNode.type).toBe('starShipsNode');
 
-  test("should return correct position for index 0 in a circle with radius 0 and total 5", () => {
-    const result = getElementPosition(0, 5, 0);
-    expect(result).toEqual({ x: 0, y: 0 });
-  });
+        expect(starshipNode.data).toEqual(starship);
+        expect(starshipNode.position.y).toBe(400);
+      }
+    });
 
-  test("should handle large radius values", () => {
-    const result = getElementPosition(2, 6, 1000);
-    expect(result).toEqual({ x: -500, y: 866 });
-  });
-
-  test("should handle negative radius values", () => {
-    const result = getElementPosition(2, 4, -100);
-    expect(result).toEqual({ x: 100, y: -0 });
-  });
-
-  test("should handle negative index values", () => {
-    const result = getElementPosition(-1, 4, 100);
-    expect(result).toEqual({ x: 0, y: -100 });
-    0;
+    expect(edges.filter((edge) => edge.source === '1').length).toBe(4);
+    expect(edges.filter((edge) => edge.target === '1').length).toBe(0);
   });
 
-  test("should handle index greater than total", () => {
-    const result = getElementPosition(5, 4, 100);
-    expect(result).toEqual({ x: 0, y: 100 });
+  it('should correctly position nodes based on the number of films and starships', () => {
+    const { nodes } = getReactFlowProps(
+      mockCharacter,
+      mockFilms,
+      mockStarships
+    );
+    const filmNodes = nodes.filter((node) => node.type === 'filmNode');
+
+    filmNodes.forEach((filmNode, index) => {
+      const expectedX = getLinePositions(
+        { x: 0, y: 0 },
+        mockFilms.length,
+        150,
+        30
+      )[index].x;
+      expect(filmNode.position.x).toBe(expectedX);
+    });
+  });
+
+  it('should handle empty input arrays correctly', () => {
+    const { nodes, edges } = getReactFlowProps(mockCharacter, [], []);
+
+    expect(nodes).toHaveLength(1);
+    expect(edges).toHaveLength(0);
+
+    const characterNode = nodes.find((node) => node.id === '1');
+    expect(characterNode).toBeDefined();
   });
 });

@@ -1,5 +1,5 @@
-import { CharacterType } from "../types/character";
-import "../styles/characterItem.style.scss";
+import { CharacterType } from '../types/character';
+import '../styles/characterItem.style.scss';
 
 interface CharacterItemProps {
   character: CharacterType;

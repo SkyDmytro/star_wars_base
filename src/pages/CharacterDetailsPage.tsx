@@ -1,13 +1,14 @@
 // import { FilmType } from "../types/films";
 // import { VehicleType } from "../types/vehicles";
-import { ReactFlow } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
+import { ReactFlow } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { useState, useMemo } from 'react';
+import { getReactFlowProps } from '../utils/functions';
+import { mockCharacter, mockStarships, mockFilms } from '../utils/mocks';
+import CharacterNode from '../components/CharacterNode';
+import StarShipNode from '../components/StarShipNode';
+import FilmNode from '../components/FilmNode';
 
-import { getReactFlowProps } from "../utils/functions";
-import { mockCharacter, mockStarships, mockFilms } from "../utils/mocks";
-import CharacterNode from "../components/CharacterNode";
-import StarShipNode from "../components/StarShipNode";
-import FilmNode from "../components/FilmNode";
 // const films: FilmType[] = [
 //   {
 //     id: 1,
@@ -558,12 +559,27 @@ export const nodeTypes = {
 
 export const CharacterDetailsPage = () => {
   // const { id } = useParaes();
-  const { edges: initialEdges, nodes: initialNodes } = getReactFlowProps(
-    mockCharacter,
-    mockFilms,
-    mockStarships
-  );
+  const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
+    return getReactFlowProps(mockCharacter, mockFilms, mockStarships);
+  }, [mockCharacter, mockFilms, mockStarships]);
   console.log(initialEdges, initialNodes);
+  const [nodes, setNodes] = useState(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
+
+  const onNodeMouseEnter = (event, node) => {
+    const newEdges = edges.map((edge) => {
+      if (edge.source === node.id || edge.target === node.id) {
+        return { ...edge, style: { stroke: 'red', strokeWidth: 2 } };
+      }
+      return edge;
+    });
+
+    setEdges(newEdges);
+  };
+
+  const onNodeMouseLeave = () => {
+    setEdges([...initialEdges]);
+  };
   // const initialNodes = [
   //   {
   //     id: "1",
@@ -630,14 +646,16 @@ export const CharacterDetailsPage = () => {
   // ];
 
   return (
-    <div style={{ height: "100vh", width: "100vw" }}>
+    <div style={{ height: '97vh', width: '99vw' }}>
       <ReactFlow
-        nodes={initialNodes}
-        edges={initialEdges}
+        nodes={nodes}
+        edges={edges}
         nodeTypes={nodeTypes}
         nodesDraggable={true}
         nodesConnectable={false}
         elementsSelectable={true}
+        onNodeMouseEnter={onNodeMouseEnter}
+        onNodeMouseLeave={onNodeMouseLeave}
         fitView
       ></ReactFlow>
     </div>

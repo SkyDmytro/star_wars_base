@@ -1,7 +1,7 @@
-import React from "react";
-import { StarShipType } from "../types/starship";
-import { Handle, Position } from "@xyflow/react";
-import "../styles/starShipNode.style.scss";
+import React from 'react';
+import { StarShipType } from '../types/starship';
+import { Handle, Position } from '@xyflow/react';
+import '../styles/starShipNode.style.scss';
 
 const StarShipNode = ({ data }: { data: StarShipType }) => {
   return (

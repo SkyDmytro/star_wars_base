@@ -9,8 +9,9 @@
   // ],
 
   "compilerOptions": {
-    "target": "ES6",
-    "module": "commonjs",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

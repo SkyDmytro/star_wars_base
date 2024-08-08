@@ -1,572 +1,56 @@
-// import { FilmType } from "../types/films";
-// import { VehicleType } from "../types/vehicles";
 import { ReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+
 import { getReactFlowProps } from '../utils/functions';
-import { mockCharacter, mockStarships, mockFilms } from '../utils/mocks';
 import CharacterNode from '../components/CharacterNode';
 import StarShipNode from '../components/StarShipNode';
 import FilmNode from '../components/FilmNode';
+import { Node } from '../types/reactFlow';
+import { useCharacterDetailsFetch } from '../hooks/useCharacterDetailsFetch';
+import { ErrorMessage } from '../components/ErrorMessage';
+import { Loader } from '../components/Loader';
 
-// const films: FilmType[] = [
-//   {
-//     id: 1,
-//     title: "A New Hope",
-//     episode_id: 4,
-//     opening_crawl:
-//       "It is a period of civil war.\r\nRebel spaceships, striking\r\nfrom a hidden base, have won\r\ntheir first victory against\r\nthe evil Galactic Empire.\r\n\r\nDuring the battle, Rebel\r\nspies managed to steal secret\r\nplans to the Empire's\r\nultimate weapon, the DEATH\r\nSTAR, an armored space\r\nstation with enough power\r\nto destroy an entire planet.\r\n\r\nPursued by the Empire's\r\nsinister agents, Princess\r\nLeia races home aboard her\r\nstarship, custodian of the\r\nstolen plans that can save her\r\npeople and restore\r\nfreedom to the galaxy....",
-//     director: "George Lucas",
-//     producer: "Gary Kurtz, Rick McCallum",
-//     release_date: "1977-05-25",
-//     characters: [10, 12, 13, 14, 15, 16, 18, 19, 1, 2, 3, 4, 5, 6, 7, 8, 9, 81],
-//     planets: [1, 2, 3],
-//     starships: [2, 3, 5, 9, 10, 11, 12, 13],
-//     vehicles: [4, 6, 7, 8],
-//     species: [1, 2, 3, 4, 5],
-//     created: "2014-12-10T14:23:31.880000Z",
-//     edited: "2014-12-20T19:49:45.256000Z",
-//     url: "https://sw-api.starnavi.io/films/1/",
-//   },
-//   {
-//     id: 2,
-//     title: "The Empire Strikes Back",
-//     episode_id: 5,
-//     opening_crawl:
-//       "It is a dark time for the\r\nRebellion. Although the Death\r\nStar has been destroyed,\r\nImperial troops have driven the\r\nRebel forces from their hidden\r\nbase and pursued them across\r\nthe galaxy.\r\n\r\nEvading the dreaded Imperial\r\nStarfleet, a group of freedom\r\nfighters led by Luke Skywalker\r\nhas established a new secret\r\nbase on the remote ice world\r\nof Hoth.\r\n\r\nThe evil lord Darth Vader,\r\nobsessed with finding young\r\nSkywalker, has dispatched\r\nthousands of remote probes into\r\nthe far reaches of space....",
-//     director: "Irvin Kershner",
-//     producer: "Gary Kurtz, Rick McCallum",
-//     release_date: "1980-05-17",
-//     characters: [10, 13, 14, 18, 20, 21, 22, 23, 24, 25, 26, 1, 2, 3, 4, 5],
-//     planets: [4, 5, 6, 27],
-//     starships: [3, 10, 11, 12, 15, 17, 21, 22, 23],
-//     vehicles: [8, 14, 16, 18, 19, 20],
-//     species: [1, 2, 3, 6, 7],
-//     created: "2014-12-12T11:26:24.656000Z",
-//     edited: "2014-12-15T13:07:53.386000Z",
-//     url: "https://sw-api.starnavi.io/films/2/",
-//   },
-//   {
-//     id: 3,
-//     title: "Return of the Jedi",
-//     episode_id: 6,
-//     opening_crawl:
-//       "Luke Skywalker has returned to\r\nhis home planet of Tatooine in\r\nan attempt to rescue his\r\nfriend Han Solo from the\r\nclutches of the vile gangster\r\nJabba the Hutt.\r\n\r\nLittle does Luke know that the\r\nGALACTIC EMPIRE has secretly\r\nbegun construction on a new\r\narmored space station even\r\nmore powerful than the first\r\ndreaded Death Star.\r\n\r\nWhen completed, this ultimate\r\nweapon will spell certain doom\r\nfor the small band of rebels\r\nstruggling to restore freedom\r\nto the galaxy...",
-//     director: "Richard Marquand",
-//     producer: "Howard G. Kazanjian, George Lucas, Rick McCallum",
-//     release_date: "1983-05-25",
-//     characters: [
-//       10, 13, 14, 16, 18, 20, 21, 22, 25, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 45,
-//     ],
-//     planets: [1, 5, 7, 8, 9],
-//     starships: [27, 2, 3, 10, 11, 12, 15, 17, 22, 23, 28, 29],
-//     vehicles: [26, 8, 16, 18, 19, 24, 25, 30],
-//     species: [10, 15, 1, 2, 3, 5, 6, 8, 9],
-//     created: "2014-12-18T10:39:33.255000Z",
-//     edited: "2014-12-20T09:48:37.462000Z",
-//     url: "https://sw-api.starnavi.io/films/3/",
-//   },
-//   {
-//     id: 4,
-//     title: "The Phantom Menace",
-//     episode_id: 1,
-//     opening_crawl:
-//       "Turmoil has engulfed the\r\nGalactic Republic. The taxation\r\nof trade routes to outlying star\r\nsystems is in dispute.\r\n\r\nHoping to resolve the matter\r\nwith a blockade of deadly\r\nbattleships, the greedy Trade\r\nFederation has stopped all\r\nshipping to the small planet\r\nof Naboo.\r\n\r\nWhile the Congress of the\r\nRepublic endlessly debates\r\nthis alarming chain of events,\r\nthe Supreme Chancellor has\r\nsecretly dispatched two Jedi\r\nKnights, the guardians of\r\npeace and justice in the\r\ngalaxy, to settle the conflict....",
-//     director: "George Lucas",
-//     producer: "Rick McCallum",
-//     release_date: "1999-05-19",
-//     characters: [
-//       10, 16, 20, 21, 32, 33, 34, 35, 36, 37, 38, 39, 2, 3, 40, 41, 42, 43, 44,
-//       46, 47, 48, 11, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-//     ],
-//     planets: [1, 8, 9],
-//     starships: [31, 32, 39, 40, 41],
-//     vehicles: [34, 35, 36, 42, 33, 37, 38],
-//     species: [
-//       11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 1, 2, 6, 22, 23, 24, 25, 26,
-//       27,
-//     ],
-//     created: "2014-12-19T16:52:55.740000Z",
-//     edited: "2014-12-20T10:54:07.216000Z",
-//     url: "https://sw-api.starnavi.io/films/4/",
-//   },
-//   {
-//     id: 5,
-//     title: "Attack of the Clones",
-//     episode_id: 2,
-//     opening_crawl:
-//       "There is unrest in the Galactic\r\nSenate. Several thousand solar\r\nsystems have declared their\r\nintentions to leave the Republic.\r\n\r\nThis separatist movement,\r\nunder the leadership of the\r\nmysterious Count Dooku, has\r\nmade it difficult for the limited\r\nnumber of Jedi Knights to maintain \r\npeace and order in the galaxy.\r\n\r\nSenator Amidala, the former\r\nQueen of Naboo, is returning\r\nto the Galactic Senate to vote\r\non the critical issue of creating\r\nan ARMY OF THE REPUBLIC\r\nto assist the overwhelmed\r\nJedi....",
-//     director: "George Lucas",
-//     producer: "Rick McCallum",
-//     release_date: "2002-05-16",
-//     characters: [
-//       10, 20, 21, 22, 33, 35, 36, 2, 3, 6, 7, 40, 43, 46, 11, 51, 52, 53, 58,
-//       59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
-//       77, 78, 82,
-//     ],
-//     planets: [1, 8, 9, 10, 11],
-//     starships: [43, 47, 48, 49, 52, 58, 21, 32, 39],
-//     vehicles: [44, 45, 46, 50, 51, 53, 54, 55, 56, 57, 4],
-//     species: [12, 13, 15, 1, 2, 6, 28, 29, 30, 31, 32, 33, 34, 35],
-//     created: "2014-12-20T10:57:57.886000Z",
-//     edited: "2014-12-20T20:18:48.516000Z",
-//     url: "https://sw-api.starnavi.io/films/5/",
-//   },
-//   {
-//     id: 6,
-//     title: "Revenge of the Sith",
-//     episode_id: 3,
-//     opening_crawl:
-//       "War! The Republic is crumbling\r\nunder attacks by the ruthless\r\nSith Lord, Count Dooku.\r\nThere are heroes on both sides.\r\nEvil is everywhere.\r\n\r\nIn a stunning move, the\r\nfiendish droid leader, General\r\nGrievous, has swept into the\r\nRepublic capital and kidnapped\r\nChancellor Palpatine, leader of\r\nthe Galactic Senate.\r\n\r\nAs the Separatist Droid Army\r\nattempts to flee the besieged\r\ncapital with their valuable\r\nhostage, two Jedi Knights lead a\r\ndesperate mission to rescue the\r\ncaptive Chancellor....",
-//     director: "George Lucas",
-//     producer: "Rick McCallum",
-//     release_date: "2005-05-19",
-//     characters: [
-//       10, 12, 13, 20, 21, 33, 35, 1, 2, 3, 4, 5, 6, 7, 46, 11, 51, 52, 53, 54,
-//       55, 56, 58, 63, 64, 67, 68, 75, 78, 79, 80, 81, 82, 83,
-//     ],
-//     planets: [1, 2, 5, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19],
-//     starships: [48, 59, 61, 63, 64, 65, 66, 68, 2, 32, 74, 75],
-//     vehicles: [50, 53, 56, 60, 62, 67, 69, 70, 71, 72, 73, 33, 76],
-//     species: [
-//       15, 19, 20, 1, 2, 3, 6, 28, 29, 30, 33, 34, 35, 36, 37, 23, 24, 25, 26,
-//       27,
-//     ],
-//     created: "2014-12-20T18:49:38.403000Z",
-//     edited: "2014-12-20T20:47:52.073000Z",
-//     url: "https://sw-api.starnavi.io/films/6/",
-//   },
-// ];
-
-// const vehicles: VehicleType[] = [
-//   {
-//     id: 26,
-//     name: "TIE/IN interceptor",
-//     model: "Twin Ion Engine Interceptor",
-//     manufacturer: "Sienar Fleet Systems",
-//     cost_in_credits: "unknown",
-//     length: "9.6",
-//     max_atmosphering_speed: "1250",
-//     crew: "1",
-//     passengers: "0",
-//     cargo_capacity: "75",
-//     consumables: "2 days",
-//     vehicle_class: "starfighter",
-//     pilots: [],
-//     films: [3],
-//     created: "2014-12-18T10:50:28.225000Z",
-//     edited: "2014-12-20T21:30:21.691000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/26/",
-//   },
-//   {
-//     id: 34,
-//     name: "Multi-Troop Transport",
-//     model: "Multi-Troop Transport",
-//     manufacturer: "Baktoid Armor Workshop",
-//     cost_in_credits: "138000",
-//     length: "31",
-//     max_atmosphering_speed: "35",
-//     crew: "4",
-//     passengers: "112",
-//     cargo_capacity: "12000",
-//     consumables: "unknown",
-//     vehicle_class: "repulsorcraft",
-//     pilots: [],
-//     films: [4],
-//     created: "2014-12-19T17:12:04.400000Z",
-//     edited: "2014-12-20T21:30:21.700000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/34/",
-//   },
-//   {
-//     id: 35,
-//     name: "Armored Assault Tank",
-//     model: "Armoured Assault Tank",
-//     manufacturer: "Baktoid Armor Workshop",
-//     cost_in_credits: "unknown",
-//     length: "9.75",
-//     max_atmosphering_speed: "55",
-//     crew: "4",
-//     passengers: "6",
-//     cargo_capacity: "unknown",
-//     consumables: "unknown",
-//     vehicle_class: "repulsorcraft",
-//     pilots: [],
-//     films: [4],
-//     created: "2014-12-19T17:13:29.799000Z",
-//     edited: "2014-12-20T21:30:21.703000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/35/",
-//   },
-//   {
-//     id: 36,
-//     name: "Single Trooper Aerial Platform",
-//     model: "Single Trooper Aerial Platform",
-//     manufacturer: "Baktoid Armor Workshop",
-//     cost_in_credits: "2500",
-//     length: "2",
-//     max_atmosphering_speed: "400",
-//     crew: "1",
-//     passengers: "0",
-//     cargo_capacity: "none",
-//     consumables: "none",
-//     vehicle_class: "repulsorcraft",
-//     pilots: [],
-//     films: [4],
-//     created: "2014-12-19T17:15:09.511000Z",
-//     edited: "2014-12-20T21:30:21.705000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/36/",
-//   },
-//   {
-//     id: 42,
-//     name: "Sith speeder",
-//     model: "FC-20 speeder bike",
-//     manufacturer: "Razalon",
-//     cost_in_credits: "4000",
-//     length: "1.5",
-//     max_atmosphering_speed: "180",
-//     crew: "1",
-//     passengers: "0",
-//     cargo_capacity: "2",
-//     consumables: "unknown",
-//     vehicle_class: "speeder",
-//     pilots: [44],
-//     films: [4],
-//     created: "2014-12-20T10:09:56.095000Z",
-//     edited: "2014-12-20T21:30:21.712000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/42/",
-//   },
-//   {
-//     id: 44,
-//     name: "Zephyr-G swoop bike",
-//     model: "Zephyr-G swoop bike",
-//     manufacturer: "Mobquet Swoops and Speeders",
-//     cost_in_credits: "5750",
-//     length: "3.68",
-//     max_atmosphering_speed: "350",
-//     crew: "1",
-//     passengers: "1",
-//     cargo_capacity: "200",
-//     consumables: "none",
-//     vehicle_class: "repulsorcraft",
-//     pilots: [11],
-//     films: [5],
-//     created: "2014-12-20T16:24:16.026000Z",
-//     edited: "2014-12-20T21:30:21.714000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/44/",
-//   },
-//   {
-//     id: 45,
-//     name: "Koro-2 Exodrive airspeeder",
-//     model: "Koro-2 Exodrive airspeeder",
-//     manufacturer: "Desler Gizh Outworld Mobility Corporation",
-//     cost_in_credits: "unknown",
-//     length: "6.6",
-//     max_atmosphering_speed: "800",
-//     crew: "1",
-//     passengers: "1",
-//     cargo_capacity: "80",
-//     consumables: "unknown",
-//     vehicle_class: "airspeeder",
-//     pilots: [70],
-//     films: [5],
-//     created: "2014-12-20T17:17:33.526000Z",
-//     edited: "2014-12-20T21:30:21.716000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/45/",
-//   },
-//   {
-//     id: 46,
-//     name: "XJ-6 airspeeder",
-//     model: "XJ-6 airspeeder",
-//     manufacturer: "Narglatch AirTech prefabricated kit",
-//     cost_in_credits: "unknown",
-//     length: "6.23",
-//     max_atmosphering_speed: "720",
-//     crew: "1",
-//     passengers: "1",
-//     cargo_capacity: "unknown",
-//     consumables: "unknown",
-//     vehicle_class: "airspeeder",
-//     pilots: [11],
-//     films: [5],
-//     created: "2014-12-20T17:19:19.991000Z",
-//     edited: "2014-12-20T21:30:21.719000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/46/",
-//   },
-//   {
-//     id: 50,
-//     name: "LAAT/i",
-//     model: "Low Altitude Assault Transport/infrantry",
-//     manufacturer: "Rothana Heavy Engineering",
-//     cost_in_credits: "unknown",
-//     length: "17.4",
-//     max_atmosphering_speed: "620",
-//     crew: "6",
-//     passengers: "30",
-//     cargo_capacity: "170",
-//     consumables: "unknown",
-//     vehicle_class: "gunship",
-//     pilots: [],
-//     films: [5, 6],
-//     created: "2014-12-20T18:01:21.014000Z",
-//     edited: "2014-12-20T21:30:21.723000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/50/",
-//   },
-//   {
-//     id: 51,
-//     name: "LAAT/c",
-//     model: "Low Altitude Assault Transport/carrier",
-//     manufacturer: "Rothana Heavy Engineering",
-//     cost_in_credits: "unknown",
-//     length: "28.82",
-//     max_atmosphering_speed: "620",
-//     crew: "1",
-//     passengers: "0",
-//     cargo_capacity: "40000",
-//     consumables: "unknown",
-//     vehicle_class: "gunship",
-//     pilots: [],
-//     films: [5],
-//     created: "2014-12-20T18:02:46.802000Z",
-//     edited: "2014-12-20T21:30:21.725000Z",
-//     url: "https://sw-api.starnavi.io/vehicles/51/",
-//   },
-// ];
-
-// const starShips = [
-//   {
-//     id: 27,
-//     name: "Calamari Cruiser",
-//     model: "MC80 Liberty type Star Cruiser",
-//     manufacturer: "Mon Calamari shipyards",
-//     cost_in_credits: "104000000",
-//     length: "1200",
-//     max_atmosphering_speed: "n/a",
-//     crew: "5400",
-//     passengers: "1200",
-//     cargo_capacity: "unknown",
-//     consumables: "2 years",
-//     hyperdrive_rating: "1.0",
-//     MGLT: "60",
-//     starship_class: "Star Cruiser",
-//     pilots: [],
-//     films: [3],
-//     created: "2014-12-18T10:54:57.804000Z",
-//     edited: "2014-12-20T21:23:49.904000Z",
-//     url: "https://sw-api.starnavi.io/starships/27/",
-//   },
-//   {
-//     id: 31,
-//     name: "Republic Cruiser",
-//     model: "Consular-class cruiser",
-//     manufacturer: "Corellian Engineering Corporation",
-//     cost_in_credits: "unknown",
-//     length: "115",
-//     max_atmosphering_speed: "900",
-//     crew: "9",
-//     passengers: "16",
-//     cargo_capacity: "unknown",
-//     consumables: "unknown",
-//     hyperdrive_rating: "2.0",
-//     MGLT: "unknown",
-//     starship_class: "Space cruiser",
-//     pilots: [],
-//     films: [4],
-//     created: "2014-12-19T17:01:31.488000Z",
-//     edited: "2014-12-20T21:23:49.912000Z",
-//     url: "https://sw-api.starnavi.io/starships/31/",
-//   },
-//   {
-//     id: 40,
-//     name: "Naboo Royal Starship",
-//     model: "J-type 327 Nubian royal starship",
-//     manufacturer:
-//       "Theed Palace Space Vessel Engineering Corps, Nubia Star Drives",
-//     cost_in_credits: "unknown",
-//     length: "76",
-//     max_atmosphering_speed: "920",
-//     crew: "8",
-//     passengers: "unknown",
-//     cargo_capacity: "unknown",
-//     consumables: "unknown",
-//     hyperdrive_rating: "1.8",
-//     MGLT: "unknown",
-//     starship_class: "yacht",
-//     pilots: [39],
-//     films: [4],
-//     created: "2014-12-19T17:45:03.506000Z",
-//     edited: "2014-12-20T21:23:49.919000Z",
-//     url: "https://sw-api.starnavi.io/starships/40/",
-//   },
-//   {
-//     id: 41,
-//     name: "Scimitar",
-//     model: "Star Courier",
-//     manufacturer: "Republic Sienar Systems",
-//     cost_in_credits: "55000000",
-//     length: "26.5",
-//     max_atmosphering_speed: "1180",
-//     crew: "1",
-//     passengers: "6",
-//     cargo_capacity: "2500000",
-//     consumables: "30 days",
-//     hyperdrive_rating: "1.5",
-//     MGLT: "unknown",
-//     starship_class: "Space Transport",
-//     pilots: [44],
-//     films: [4],
-//     created: "2014-12-20T09:39:56.116000Z",
-//     edited: "2014-12-20T21:23:49.922000Z",
-//     url: "https://sw-api.starnavi.io/starships/41/",
-//   },
-//   {
-//     id: 43,
-//     name: "J-type diplomatic barge",
-//     model: "J-type diplomatic barge",
-//     manufacturer:
-//       "Theed Palace Space Vessel Engineering Corps, Nubia Star Drives",
-//     cost_in_credits: "2000000",
-//     length: "39",
-//     max_atmosphering_speed: "2000",
-//     crew: "5",
-//     passengers: "10",
-//     cargo_capacity: "unknown",
-//     consumables: "1 year",
-//     hyperdrive_rating: "0.7",
-//     MGLT: "unknown",
-//     starship_class: "Diplomatic barge",
-//     pilots: [],
-//     films: [5],
-//     created: "2014-12-20T11:05:51.237000Z",
-//     edited: "2014-12-20T21:23:49.925000Z",
-//     url: "https://sw-api.starnavi.io/starships/43/",
-//   },
-//   {
-//     id: 47,
-//     name: "AA-9 Coruscant freighter",
-//     model: "Botajef AA-9 Freighter-Liner",
-//     manufacturer: "Botajef Shipyards",
-//     cost_in_credits: "unknown",
-//     length: "390",
-//     max_atmosphering_speed: "unknown",
-//     crew: "unknown",
-//     passengers: "30000",
-//     cargo_capacity: "unknown",
-//     consumables: "unknown",
-//     hyperdrive_rating: "unknown",
-//     MGLT: "unknown",
-//     starship_class: "freighter",
-//     pilots: [],
-//     films: [5],
-//     created: "2014-12-20T17:24:23.509000Z",
-//     edited: "2014-12-20T21:23:49.928000Z",
-//     url: "https://sw-api.starnavi.io/starships/47/",
-//   },
-//   {
-//     id: 48,
-//     name: "Jedi starfighter",
-//     model: "Delta-7 Aethersprite-class interceptor",
-//     manufacturer: "Kuat Systems Engineering",
-//     cost_in_credits: "180000",
-//     length: "8",
-//     max_atmosphering_speed: "1150",
-//     crew: "1",
-//     passengers: "0",
-//     cargo_capacity: "60",
-//     consumables: "7 days",
-//     hyperdrive_rating: "1.0",
-//     MGLT: "unknown",
-//     starship_class: "Starfighter",
-//     pilots: [10, 58],
-//     films: [5, 6],
-//     created: "2014-12-20T17:35:23.906000Z",
-//     edited: "2014-12-20T21:23:49.930000Z",
-//     url: "https://sw-api.starnavi.io/starships/48/",
-//   },
-//   {
-//     id: 49,
-//     name: "H-type Nubian yacht",
-//     model: "H-type Nubian yacht",
-//     manufacturer: "Theed Palace Space Vessel Engineering Corps",
-//     cost_in_credits: "unknown",
-//     length: "47.9",
-//     max_atmosphering_speed: "8000",
-//     crew: "4",
-//     passengers: "unknown",
-//     cargo_capacity: "unknown",
-//     consumables: "unknown",
-//     hyperdrive_rating: "0.9",
-//     MGLT: "unknown",
-//     starship_class: "yacht",
-//     pilots: [35],
-//     films: [5],
-//     created: "2014-12-20T17:46:46.847000Z",
-//     edited: "2014-12-20T21:23:49.932000Z",
-//     url: "https://sw-api.starnavi.io/starships/49/",
-//   },
-//   {
-//     id: 52,
-//     name: "Republic Assault ship",
-//     model: "Acclamator I-class assault ship",
-//     manufacturer: "Rothana Heavy Engineering",
-//     cost_in_credits: "unknown",
-//     length: "752",
-//     max_atmosphering_speed: "unknown",
-//     crew: "700",
-//     passengers: "16000",
-//     cargo_capacity: "11250000",
-//     consumables: "2 years",
-//     hyperdrive_rating: "0.6",
-//     MGLT: "unknown",
-//     starship_class: "assault ship",
-//     pilots: [],
-//     films: [5],
-//     created: "2014-12-20T18:08:42.926000Z",
-//     edited: "2014-12-20T21:23:49.935000Z",
-//     url: "https://sw-api.starnavi.io/starships/52/",
-//   },
-//   {
-//     id: 58,
-//     name: "Solar Sailer",
-//     model: "Punworcca 116-class interstellar sloop",
-//     manufacturer: "Huppla Pasa Tisc Shipwrights Collective",
-//     cost_in_credits: "35700",
-//     length: "15.2",
-//     max_atmosphering_speed: "1600",
-//     crew: "3",
-//     passengers: "11",
-//     cargo_capacity: "240",
-//     consumables: "7 days",
-//     hyperdrive_rating: "1.5",
-//     MGLT: "unknown",
-//     starship_class: "yacht",
-//     pilots: [],
-//     films: [5],
-//     created: "2014-12-20T18:37:56.969000Z",
-//     edited: "2014-12-20T21:23:49.937000Z",
-//     url: "https://sw-api.starnavi.io/starships/58/",
-//   },
-// ];
-
-// export const CharacterDetailsPage = () => {
-//   const { id } = useParams();
-//   return <div>CharacterDetailsPage{id}</div>;
-// };
-
-export const nodeTypes = {
+const nodeTypes = {
   charNode: CharacterNode,
   filmNode: FilmNode,
   starShipsNode: StarShipNode,
 };
 
 export const CharacterDetailsPage = () => {
-  // const { id } = useParaes();
+  const { id } = useParams();
+  const {
+    fetchAllData,
+    characterData,
+    filmsData,
+    starshipsData,
+    loading,
+    error,
+  } = useCharacterDetailsFetch();
+
+  useEffect(() => {
+    if (id) {
+      fetchAllData(Number(id));
+    }
+  }, [id]);
+
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
-    return getReactFlowProps(mockCharacter, mockFilms, mockStarships);
-  }, [mockCharacter, mockFilms, mockStarships]);
-  console.log(initialEdges, initialNodes);
+    if (characterData && filmsData && starshipsData) {
+      return getReactFlowProps(characterData, filmsData, starshipsData);
+    }
+    return { nodes: [], edges: [] };
+  }, [characterData, filmsData, starshipsData]);
+
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
-  const onNodeMouseEnter = (event, node) => {
+  useEffect(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+  }, [initialNodes, initialEdges]);
+
+  const onNodeMouseEnter = (event: React.MouseEvent, node: Node) => {
     const newEdges = edges.map((edge) => {
       if (edge.source === node.id || edge.target === node.id) {
         return { ...edge, style: { stroke: 'red', strokeWidth: 2 } };
@@ -578,73 +62,16 @@ export const CharacterDetailsPage = () => {
   };
 
   const onNodeMouseLeave = () => {
-    setEdges([...initialEdges]);
+    setEdges(initialEdges);
   };
-  // const initialNodes = [
-  //   {
-  //     id: "1",
-  //     type: "charNode",
-  //     data: {
-  //       id: 1,
-  //       name: "Luke Skywalker",
-  //       height: "172",
-  //       mass: "77",
-  //       hair_color: "blond",
-  //       skin_color: "fair",
-  //       eye_color: "blue",
-  //       birth_year: "19BBY",
-  //       gender: "male",
-  //       homeworld: 1,
-  //       films: [2, 6, 3, 1, 7],
-  //       species: [1],
-  //       vehicles: [14, 30],
-  //       starships: [12, 22],
-  //       created: "2014-12-09T13:50:51.644000Z",
-  //       edited: "2014-12-20T21:17:56.891000Z",
-  //       url: "https://sw-api.starnavi.io/people/1/",
-  //     },
-  //     position: { x: 250, y: 0 },
-  //   },
-  //   {
-  //     id: "2",
-  //     data: { label: "Фильм 1", title: "dsadsa" },
-  //     position: { x: 50, y: 200 },
-  //     type: "filmNode",
-  //   },
-  //   {
-  //     id: "3",
-  //     data: { label: "Фильм 2", title: "dsadsa" },
-  //     position: { x: 550, y: 200 },
-  //     type: "filmNode",
-  //   },
-  //   {
-  //     id: "4",
-  //     data: { label: "Корабль 1", name: "dsadas" },
-  //     position: { x: 100, y: 500 },
-  //     type: "starShipsNode",
-  //   },
-  //   {
-  //     id: "5",
-  //     data: { label: "Корабль 2", name: "dsadas" },
-  //     position: { x: 250, y: 500 },
-  //     type: "starShipsNode",
-  //   },
-  //   {
-  //     id: "6",
-  //     data: { label: "Корабль 3", name: "dsadas" },
-  //     position: { x: 400, y: 500 },
-  //     type: "starShipsNode",
-  //   },
-  // ];
 
-  // const initialEdges = [
-  //   { id: "e1-2", source: "1", target: "2", animated: true },
-  //   { id: "e1-3", source: "1", target: "3", animated: true },
-  //   { id: "e2-4", source: "2", target: "4", animated: true },
-  //   { id: "e2-5", source: "2", target: "5", animated: true },
-  //   { id: "e3-6", source: "3", target: "6", animated: true },
-  // ];
+  if (loading) {
+    return <Loader />;
+  }
 
+  if (error) {
+    return <ErrorMessage />;
+  }
   return (
     <div style={{ height: '97vh', width: '99vw' }}>
       <ReactFlow
@@ -657,7 +84,7 @@ export const CharacterDetailsPage = () => {
         onNodeMouseEnter={onNodeMouseEnter}
         onNodeMouseLeave={onNodeMouseLeave}
         fitView
-      ></ReactFlow>
+      />
     </div>
   );
 };

@@ -10,21 +10,21 @@ export const useCharacterDetailsFetch = () => {
     data: characterData,
     error: characterError,
     loading: characterLoading,
-    fetchUrl: fetchCharacter,
+    fetchData: fetchCharacter,
   } = useFetch<CharacterType>();
 
   const {
     data: filmsData,
     error: filmsError,
     loading: filmsLoading,
-    fetchUrl: fetchFilms,
+    fetchData: fetchFilms,
   } = useFetch<FilmType[]>();
 
   const {
     data: starshipsData,
     error: starshipsError,
     loading: starshipsLoading,
-    fetchUrl: fetchStarships,
+    fetchData: fetchStarships,
   } = useFetch<StarShipType[]>();
 
   const getAllData = useCallback(
@@ -34,15 +34,13 @@ export const useCharacterDetailsFetch = () => {
 
         if (!response?.films) return;
 
-        const filmsId = response.films.join(',');
-
         const filmResponse = await fetchFilms(
           `films/?characters__in=${characterId}`
         );
 
         if (!filmResponse) return;
 
-        await fetchStarships(`starships/?films__in=${filmsId}`);
+        await fetchStarships(`starships/?pilots__in=${characterId}`);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

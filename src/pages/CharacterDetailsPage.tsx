@@ -53,7 +53,7 @@ export const CharacterDetailsPage = () => {
   const onNodeMouseEnter = (event: React.MouseEvent, node: Node) => {
     const newEdges = edges.map((edge) => {
       if (edge.source === node.id || edge.target === node.id) {
-        return { ...edge, style: { stroke: 'red', strokeWidth: 2 } };
+        return { ...edge, style: { stroke: 'yellow', strokeWidth: 2 } };
       }
       return edge;
     });

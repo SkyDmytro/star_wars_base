@@ -12,4 +12,7 @@
     font-size: larger;
     padding: 10px;
   }
+  &:hover {
+    transform: scale(1.03);
+  }
 }

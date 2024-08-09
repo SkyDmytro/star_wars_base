@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+### Project Description: Star Wars Data Base
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Tech Stack:**
 
-Currently, two official plugins are available:
+-   **Vite:** For fast project setup and build.
+-   **React:** The core framework for building the user interface.
+-   **TypeScript:** Ensures type safety and improves code quality.
+-   **Jest + React Testing Library:** Tools for writing and executing tests to ensure the reliability and stability of components.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1.  **Infinite Scroll for Hero List:**
+   -  The hero list uses an infinite scroll feature, which loads more heroes automatically as the user scrolls down. 	This makes it easier for users to keep browsing without needing to click through pages.
+-   It offers a simple and easy way to explore a large list of heroes.
+2.  **Detailed Hero Information Displayed as a Graph:**
+    
+   -   When a hero is clicked, a detailed graph is rendered using React Flow, showcasing connections between:
+       -   The selected hero (as the central node).
+       -   The movies in which the hero appears (linked to the hero).
+       -   The starships the hero has traveled on (linked to the movies).
 
-## Expanding the ESLint configuration
+**Testing:**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+-   **Jest** and **React Testing Library** were used to write unit tests for the app's core components and logic.
+-   This ensures the app's stability and correctness, even as the codebase evolves over time.
 
-- Configure the top-level `parserOptions` property like this:
+### How to Run the Project:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-};
-```
+To set up and run the project locally, follow these steps:
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+1.  **Install dependencies:**
+    
+    `npm install` 
+    
+2.  **Run the development server:**
 
-# star_wars_base
+    
+    `npm run dev` 
+    
+These commands will install the necessary packages and start the development server, allowing you to access the application in your browser.

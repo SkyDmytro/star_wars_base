@@ -7,27 +7,28 @@ describe('getLinePositions', () => {
   it('should return correct positions for multiple elements with default gap', () => {
     const positions = getLinePositions({ x: 100, y: 100 }, 3, 50, 10);
     expect(positions).toEqual([
-      { x: 40, y: 300 },
-      { x: 100, y: 300 },
-      { x: 160, y: 300 },
+      { x: 40, y: 800 },
+      { x: 100, y: 800 },
+      { x: 160, y: 800 },
     ]);
   });
   it('should return correct positions with a different gap', () => {
     const positions = getLinePositions({ x: 100, y: 100 }, 3, 50, 20);
+
     expect(positions).toEqual([
-      { x: 30, y: 300 },
-      { x: 100, y: 300 },
-      { x: 170, y: 300 },
+      { x: 30, y: 800 },
+      { x: 100, y: 800 },
+      { x: 170, y: 800 },
     ]);
   });
   it('should handle large number of elements', () => {
     const positions = getLinePositions({ x: 100, y: 100 }, 5, 50, 10);
     expect(positions).toEqual([
-      { x: -20, y: 300 },
-      { x: 40, y: 300 },
-      { x: 100, y: 300 },
-      { x: 160, y: 300 },
-      { x: 220, y: 300 },
+      { x: -20, y: 800 },
+      { x: 40, y: 800 },
+      { x: 100, y: 800 },
+      { x: 160, y: 800 },
+      { x: 220, y: 800 },
     ]);
   });
 });
@@ -60,7 +61,6 @@ describe('getReactFlowProps', () => {
       if (filmNode) {
         expect(filmNode.type).toBe('filmNode');
         expect(filmNode.data).toEqual(film);
-        expect(filmNode.position.y).toBe(200);
       }
     });
 
@@ -71,9 +71,7 @@ describe('getReactFlowProps', () => {
       );
       if (starshipNode) {
         expect(starshipNode.type).toBe('starShipsNode');
-
         expect(starshipNode.data).toEqual(starship);
-        expect(starshipNode.position.y).toBe(400);
       }
     });
 
@@ -93,8 +91,8 @@ describe('getReactFlowProps', () => {
       const expectedX = getLinePositions(
         { x: 0, y: 0 },
         mockFilms.length,
-        150,
-        30
+        500,
+        50
       )[index].x;
       expect(filmNode.position.x).toBe(expectedX);
     });

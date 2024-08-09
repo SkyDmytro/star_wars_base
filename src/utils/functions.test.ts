@@ -1,11 +1,11 @@
 import { describe, expect } from '@jest/globals';
-import { getReactFlowProps, getLinePositions } from './functions';
+import { generateReactFlowProps, calculateElementPositions } from './functions';
 import { mockCharacter, mockFilms, mockStarships } from './mocks';
 import { StarShipType } from '../types/starship';
 
 describe('getLinePositions', () => {
   it('should return correct positions for multiple elements with default gap', () => {
-    const positions = getLinePositions({ x: 100, y: 100 }, 3, 50, 10);
+    const positions = calculateElementPositions({ x: 100, y: 100 }, 3, 50, 10);
     expect(positions).toEqual([
       { x: 40, y: 800 },
       { x: 100, y: 800 },
@@ -13,7 +13,7 @@ describe('getLinePositions', () => {
     ]);
   });
   it('should return correct positions with a different gap', () => {
-    const positions = getLinePositions({ x: 100, y: 100 }, 3, 50, 20);
+    const positions = calculateElementPositions({ x: 100, y: 100 }, 3, 50, 20);
 
     expect(positions).toEqual([
       { x: 30, y: 800 },
@@ -22,7 +22,7 @@ describe('getLinePositions', () => {
     ]);
   });
   it('should handle large number of elements', () => {
-    const positions = getLinePositions({ x: 100, y: 100 }, 5, 50, 10);
+    const positions = calculateElementPositions({ x: 100, y: 100 }, 5, 50, 10);
     expect(positions).toEqual([
       { x: -20, y: 800 },
       { x: 40, y: 800 },
@@ -39,7 +39,7 @@ jest.mock('uuid', () => ({
 
 describe('getReactFlowProps', () => {
   it('should return correct nodes and edges for given character, films, and starships', () => {
-    const { nodes, edges } = getReactFlowProps(
+    const { nodes, edges } = generateReactFlowProps(
       mockCharacter,
       mockFilms,
       mockStarships
@@ -80,7 +80,7 @@ describe('getReactFlowProps', () => {
   });
 
   it('should correctly position nodes based on the number of films and starships', () => {
-    const { nodes } = getReactFlowProps(
+    const { nodes } = generateReactFlowProps(
       mockCharacter,
       mockFilms,
       mockStarships
@@ -88,7 +88,7 @@ describe('getReactFlowProps', () => {
     const filmNodes = nodes.filter((node) => node.type === 'filmNode');
 
     filmNodes.forEach((filmNode, index) => {
-      const expectedX = getLinePositions(
+      const expectedX = calculateElementPositions(
         { x: 0, y: 0 },
         mockFilms.length,
         500,
@@ -99,7 +99,7 @@ describe('getReactFlowProps', () => {
   });
 
   it('should handle empty input arrays correctly', () => {
-    const { nodes, edges } = getReactFlowProps(mockCharacter, [], []);
+    const { nodes, edges } = generateReactFlowProps(mockCharacter, [], []);
 
     expect(nodes).toHaveLength(1);
     expect(edges).toHaveLength(0);

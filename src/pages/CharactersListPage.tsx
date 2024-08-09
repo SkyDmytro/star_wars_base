@@ -7,10 +7,10 @@ import { CharacterType } from '../types/character';
 import { Header } from '../components/Header';
 import { useFetch } from '../hooks/useFetch';
 import { Loader } from '../components/Loader';
-
-import '../styles/characterListPage.style.scss';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { EndMessageInfiniteScroll } from '../components/EndMessageInfiniteScroll';
+
+import '../styles/characterListPage.style.scss';
 
 export const CharactersListPage = () => {
   const navigate = useNavigate();

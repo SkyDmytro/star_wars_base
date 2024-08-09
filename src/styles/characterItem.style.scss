@@ -1,4 +1,4 @@
-.character-card {
+.character-item-card {
   background-color: black;
   color: yellow;
   display: flex;
@@ -6,10 +6,23 @@
   gap: 5px;
   justify-content: center;
   align-items: center;
-  .character-picture {
+  .character-item-picture {
   }
-  .character-name {
+  .character-item-name {
     font-size: larger;
     padding: 10px;
+  }
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 475px) {
+  .character-item-card {
+    width: 70%;
+    .character-item-picture {
+      width: 100%;
+      height: 100%;
+    }
   }
 }

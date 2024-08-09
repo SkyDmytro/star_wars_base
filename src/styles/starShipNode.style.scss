@@ -1,10 +1,35 @@
-.starShip-details {
-  background-color: white;
-  height: 100px;
-  width: 100px;
-  .starShip-name {
-    display: block;
-    color: #777;
-    font-size: 12px;
+.starship-card {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .starship-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00bfff;
+    margin-bottom: 10px;
+  }
+
+  .starship-info {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .starship-info span {
+    margin-bottom: 5px;
+    color: #dcdcdc;
+  }
+
+  .starship-info span::before {
+    content: '• ';
+    color: #00bfff;
   }
 }

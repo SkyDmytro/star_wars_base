@@ -14,13 +14,13 @@ export const CharacterItem = ({
     onClickProps(character.id);
   };
   return (
-    <div className="character-card" onClick={handleClick}>
+    <div className="character-item-card" onClick={handleClick}>
       <img
-        className="character-picture"
+        className="character-item-picture"
         src={`https://starwars-visualguide.com/assets/img/characters/${character.id}.jpg`}
         alt={character.name}
       />
-      <span className="character-name">{character.name}</span>
+      <span className="character-item-name">{character.name}</span>
     </div>
   );
 };

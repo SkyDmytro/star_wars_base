@@ -6,31 +6,39 @@ import { CharacterItem } from '../components/CharacterItem';
 import { CharacterType } from '../types/character';
 import { Header } from '../components/Header';
 import { useFetch } from '../hooks/useFetch';
+import { Loader } from '../components/Loader';
+import { ErrorMessage } from '../components/ErrorMessage';
+import { EndMessageInfiniteScroll } from '../components/EndMessageInfiniteScroll';
 
 import '../styles/characterListPage.style.scss';
 
 export const CharactersListPage = () => {
   const navigate = useNavigate();
   const [characters, setCharacters] = useState<CharacterType[]>([]);
-  const { fetchUrl, data, loading } = useFetch();
+  const { data, fetchData, loading, error } = useFetch();
   const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
-    fetchUrl(`people/?page=1`);
-  }, []);
+    fetchData(`people/?page=1`);
+  }, [fetchData]);
 
   useEffect(() => {
     if (pageNumber >= 2 && pageNumber <= 9) {
-      fetchUrl(`people/?page=${pageNumber}`);
+      fetchData(`people/?page=${pageNumber}`);
     }
-  }, [pageNumber, fetchUrl]);
+  }, [pageNumber, fetchData]);
 
   useEffect(() => {
     if (data) {
-      setCharacters((prevCharacters) => [
-        ...prevCharacters,
-        ...(data as CharacterType[]),
-      ]);
+      setCharacters((prevCharacters) => {
+        const existingIds = new Set(prevCharacters.map((char) => char.id));
+
+        const newCharacters = (data as CharacterType[]).filter(
+          (char) => !existingIds.has(char.id)
+        );
+
+        return [...prevCharacters, ...newCharacters];
+      });
     }
   }, [data]);
 
@@ -43,6 +51,10 @@ export const CharactersListPage = () => {
   const handleNavigate = (charId: number) => {
     navigate(`/characters/${charId}`);
   };
+
+  if (error) {
+    return <ErrorMessage />;
+  }
   return (
     <div className="characters-list">
       <Header />
@@ -50,12 +62,8 @@ export const CharactersListPage = () => {
         dataLength={characters.length}
         next={fetchNextPage}
         hasMore={pageNumber < 10}
-        loader={<h4>Loading...</h4>}
-        endMessage={
-          <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
-          </p>
-        }
+        loader={<Loader />}
+        endMessage={<EndMessageInfiniteScroll />}
       >
         <div className="characters-cards">
           {characters.map((item: CharacterType, id: number) => (

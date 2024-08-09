@@ -31,11 +31,5 @@ export const useFetch = <T>() => {
     }
   }, []);
 
-  const reset = () => {
-    setData(null);
-    setError(null);
-    setLoading(false);
-  };
-
-  return { loading, data, error, fetchUrl: fetchData, reset } as const;
+  return { loading, data, error, fetchData } as const;
 };
